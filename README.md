@@ -1,5 +1,7 @@
 # round-logger
 
+[![NPM](https://nodei.co/npm/round-logger.png?downloads=true&downloadRank=true)](https://nodei.co/npm/round-logger/)
+
 A simple rotative logger for Node.js, based on the great packages [winston](https://github.com/winstonjs/winston) and [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file/).
 
 **Ready-to-Go**. These packages are very powerful and rich of potentialities but their configuration takes some time. Therefore, I built a pre-configured rotative logger ready to be used! It offers a lot of possibilities to configure the logging behaviour, however the only required option is the absolute path of the logging files.
