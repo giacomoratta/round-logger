@@ -11,7 +11,7 @@ A simple rotative logger for Node.js, based on the great packages [winston](http
 
 ## Set the logger in your project
 ```javascript
-const LoggerFactory = require('./index.js');
+const LoggerFactory = require('./index.js'); //or require('round-logger');
 
 const Logger = LoggerFactory.create({
     enabled:true,
