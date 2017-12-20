@@ -1,6 +1,6 @@
 {
   "name": "round-logger",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A rotative file logger for NodeJS based on winston logger.",
   "author": "Giacomo Ratta",
   "license": "GPL 3.0",
