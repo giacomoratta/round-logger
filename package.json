@@ -1,13 +1,28 @@
 {
   "name": "round-logger",
   "version": "1.0.1",
-  "description": "",
+  "description": "A rotative file logger for NodeJS based on winston logger.",
+  "author": "Giacomo Ratta",
+  "license": "GPL 3.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/giacomoratta/round-logger.git"
+  },
+  "keywords": [
+    "winston",
+    "logging",
+    "log",
+    "console",
+    "rotate",
+    "file",
+    "directory",
+    "sysadmin",
+    "tools"
+  ],
   "dependencies": {
     "fs-extra": "^4.0.3",
     "lodash": "^4.17.4",
