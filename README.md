@@ -52,6 +52,8 @@ my-logs
 ## Configuration
 * **directory_logs_abs_path**: (default: '' / **REQUIRED**) Absolute path of logs directory. The directory where all logs files and directories are stored. Hint: use the global string `__directory`.
 * **enabled**: (default: true) Enable logging
+* **console_log_level**: (default: 'log') Minimum log level for console logging
+* **file_log_level**: (default: 'log') Minimum log level for file logging
 * **console_logging**: (default: true) Enable logging on console
 * **file_logging**: (default: true) Enable logging on file
 * **directory_date_pattern**: (default 'yyyy-MM') Pattern for directory names.

@@ -15,6 +15,7 @@ let path = require('path');
  */
 let _default_config = {}
 
+
 /**
  * Standard log levels
  */
@@ -31,6 +32,13 @@ _default_config.log_levels = {
  */
 _default_config.console_logging = true;
 _default_config.file_logging = true;
+
+
+/**
+ * Minimum log level for console and file logging
+ */
+_default_config.console_log_level = 'log';
+_default_config.file_log_level = 'log';
 
 
 /**
