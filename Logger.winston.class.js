@@ -32,11 +32,15 @@ class LoggerWinston extends LoggerAbstract{
     }
 
 
+    /**
+     * Error Handler for transports method on('error')
+     */
     _transport_error_handler(ehd){
         if(!ehd || !ehd.e || !ehd.e.code) return;
         switch(ehd.e.code){
             case 'ENOENT':
                 LoggerUtils.createPath(ehd.e.path, ehd.directory_logs_abs_path);
+                // path will be created but it will not contains the new log files
                 break;
         }
     }
@@ -67,13 +71,14 @@ class LoggerWinston extends LoggerAbstract{
             directory_logs_abs_path:this._config.directory_logs_abs_path
         };
 
-
         /* CONSOLE */
         if(this._config.console_logging===true){
-            let console_transport = new winston.transports.Console(_.merge({
-                    level: this._config.console_log_level,
-                    colorize: true,
-                },_common_config));
+            let consolelog_cfg = _.merge(_.merge({},_common_config),{
+                level: this._config.console_log_level,
+                colorize: true,
+            });
+
+            let console_transport = new winston.transports.Console(consolelog_cfg);
             console_transport.on('error',(e)=>{ _ehd.e=e; this._transport_error_handler(_ehd); });
             logcfg.transports.push(console_transport);
         }
@@ -82,11 +87,12 @@ class LoggerWinston extends LoggerAbstract{
         /* FILE > global log (daily rotation) */
         if(this._config.file_logging===true && !_.isNil(this._config.file_global_log_path)){
             console.log('LoggerWinston > add standard logging on '+this._config.file_global_log_path);
-            let global_file_transport = new winston.transports.DailyRotateFile(_.merge({
+            let globalog_cfg = _.merge(_.merge({},_common_config),{
                 name: 'global_log',
                 filename: this._config.file_global_log_path,
                 level: this._config.file_log_level,
-            },_common_config));
+            });
+            let global_file_transport = new winston.transports.DailyRotateFile(globalog_cfg);
             global_file_transport.on('error',(e)=>{ _ehd.e=e; this._transport_error_handler(_ehd); });
             logcfg.transports.push(global_file_transport);
         }
@@ -95,12 +101,13 @@ class LoggerWinston extends LoggerAbstract{
         /* FILE > error log */
         if(this._config.file_logging===true && !_.isNil(this._config.file_error_log_path)){
             console.log('LoggerWinston > add error logging on '+this._config.file_error_log_path);
-            let error_file_transport = new winston.transports.DailyRotateFile(_.merge({
+            let errorlog_cfg = _.merge(_.merge({},_common_config),{
                 name: 'error_log',
                 filename: this._config.file_error_log_path,
                 level: this._config.log_levels.error,
                 maxsize:_common_config.maxsize*5, //bigger file for error logs
-            },_common_config));
+            });
+            let error_file_transport = new winston.transports.DailyRotateFile(errorlog_cfg);
             error_file_transport.on('error',(e)=>{ _ehd.e=e; this._transport_error_handler(_ehd); });
             logcfg.transports.push(error_file_transport);
         }
@@ -126,7 +133,7 @@ class LoggerWinston extends LoggerAbstract{
 
 
     log(){
-        this._logger.silly.apply(null,Object.values(arguments));
+        this._logger.silly.apply(null,Object.values(arguments)); // TODO: remove Object.values?
     };
 
     info(){

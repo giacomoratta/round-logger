@@ -127,7 +127,7 @@ class LoggerAbstract extends Logger{
         };
 
         // CONFIG
-        this._config = _default_config;
+        this._config = _.merge({},_default_config);
         this.config(config);
     }
 
@@ -137,10 +137,12 @@ class LoggerAbstract extends Logger{
 
         // translate standard log levels into specific-logger log levels
         if(config.console_log_level) this._config.console_log_level = this._config.log_levels[config.console_log_level];
+        this._config.console_log_level = this._config.log_levels[this._config.console_log_level];
         if(!this._config.console_log_level) this._config.console_log_level = this._config.log_levels.log;
 
         // translate standard log levels into specific-logger log levels
         if(config.file_log_level) this._config.file_log_level = this._config.log_levels[config.file_log_level];
+        this._config.file_log_level = this._config.log_levels[this._config.file_log_level];
         if(!this._config.file_log_level) this._config.file_log_level = this._config.log_levels.log;
 
         // set paths

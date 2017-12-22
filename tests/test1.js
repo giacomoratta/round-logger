@@ -5,7 +5,7 @@ const LoggerFactory = require('../index.js');
 const Logger = LoggerFactory.create({
     enabled:true,
     directory_logs_abs_path:__dirname+'/logs_test1',
-    max_file_size:100
+    max_file_size:100000
 });
 
 // Logger shoud be added to global objects or should replace the console object
@@ -13,7 +13,7 @@ const Logger = LoggerFactory.create({
 // global.console = Logger
 
 
-for(let i=0; i<1000; i++){
+for(let i=0; i<10; i++){
   Logger.log(__dirname);
   Logger.info(__dirname);
   Logger.error(__dirname);
