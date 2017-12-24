@@ -3,6 +3,7 @@
  *
  * Logger factory
  */
+'use strict'
 
 class LoggerFactory{
 
@@ -28,7 +29,7 @@ class LoggerFactory{
         catch(e){
             console.error('LoggerFactory > cannot instantiate the logger: return native console object.');
             console.error('LoggerFactory > error message: '+e.message);
-            console.error(e);
+            console.trace(e);
             newLogger = console;
         }
 

@@ -4,6 +4,7 @@
  * Dummy Logger class.
  *
  */
+ 'use strict'
 
 class Logger{
 

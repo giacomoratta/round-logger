@@ -5,6 +5,8 @@
  *
  */
 
+'use strict'
+
 let _ = require('lodash');
 let path = require('path');
 
@@ -110,7 +112,7 @@ const Logger = require('./Logger.class.js');
 class LoggerAbstract extends Logger{
 
     constructor(logger,config){
-        if (new.target === LoggerAbstract) {
+        if(new.target === LoggerAbstract) {
             throw new TypeError("Cannot construct LoggerAbstract instances directly");
         }
         super();
@@ -129,11 +131,13 @@ class LoggerAbstract extends Logger{
         // CONFIG
         this._config = _.merge({},_default_config);
         this.config(config);
+
     }
 
 
     config(config){
-        _.merge(this._config,config);
+        if(!config) config={};
+        this._config = _.merge(this._config,config);
 
         // translate standard log levels into specific-logger log levels
         if(config.console_log_level) this._config.console_log_level = this._config.log_levels[config.console_log_level];
@@ -152,7 +156,7 @@ class LoggerAbstract extends Logger{
         this._config.directory_logs_abs_path=path.join(this._config.directory_logs_abs_path,'');//force to set a well formatted path
         if(!this._config.directory_logs_abs_path || !this._config.directory_logs_abs_path.length || this._config.directory_logs_abs_path.length<=1) this._config.file_logging=false;
 
-        this.status();
+        //this.status();
     }
 
 

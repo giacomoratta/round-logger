@@ -62,3 +62,14 @@ my-logs
 * **max_files**: (default: 10) Max number of log files per day.
 * **file_global_log**: (default: 'log.log') Global log file name; the global log is a file with all log levels.
 * **file_error_log**: (default: 'error.log') Error log file name; the error log is a file with error level only.
+
+
+## Bugs or requests
+I am still working on this project. So, please, report me any kind of bug or requests about new features.
+You can do it on [GitHub Issues](https://github.com/giacomoratta/round-logger/issues) or via email.
+I will try to solve each issues in a reasonable time.
+
+
+## Next changes
+* Mocha tests
+* Browser version

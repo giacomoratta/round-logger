@@ -3,6 +3,7 @@
  *
  * Wrap winston logger into a console-like object.
  */
+ 'use strict'
 
 const _ = require('lodash');
 
@@ -28,58 +29,49 @@ class LoggerWinston extends LoggerAbstract{
 
         super( null /*logger object*/ , config );
 
-        this._init();
+        this.current_config = {
+            console_tx:null,
+            global_tx:null,
+            error_tx:null
+        };
+
+        this._init_config();
+        this._init_logger();
     }
 
 
     /**
      * Error Handler for transports method on('error')
      */
-    _transport_error_handler(ehd){
-        if(!ehd || !ehd.e || !ehd.e.code) return;
-        switch(ehd.e.code){
+    _transport_error_handler(e){
+        if(!e || !e.code) return;
+        //console.log('LoggerWinston > Error Handler');
+        switch(e.code){
             case 'ENOENT':
-                LoggerUtils.createPath(ehd.e.path, ehd.directory_logs_abs_path);
-                // path will be created but it will not contains the new log files
+                LoggerUtils.createPath(e.path,{stripFilename:true});
+                /* After creating the path, the logger has to be re-initialized
+                   because its transports have wrong descriptors; so, the new
+                   transports will have good descriptors pointing existant paths. */
+                this._init_logger();
                 break;
         }
     }
 
 
-    _init(){
+    _init_logger(){
 
-        const _common_config = {
-            level: 'silly',
-            handleExceptions: true, //print exceptions
-            timestamp: true,
-            prettyPrint: true,
-            json: false,
-            maxsize:this._config.max_file_size,
-            maxfiles:this._config.max_files,
-            datePattern: this._config.directory_date_pattern+"/"+this._config.file_date_pattern,
-            prepend: true // prepend datePattern to file name
-        };
+        console.log('LoggerWinston > _init_logger');
 
         // New Logger object configuration
         const logcfg = {
             transports: [ ]
         };
 
-        // Error Handler Data (for callback)
-        const _ehd = {
-            e:null,
-            directory_logs_abs_path:this._config.directory_logs_abs_path
-        };
 
         /* CONSOLE */
         if(this._config.console_logging===true){
-            let consolelog_cfg = _.merge(_.merge({},_common_config),{
-                level: this._config.console_log_level,
-                colorize: true,
-            });
-
-            let console_transport = new winston.transports.Console(consolelog_cfg);
-            console_transport.on('error',(e)=>{ _ehd.e=e; this._transport_error_handler(_ehd); });
+            let console_transport = new winston.transports.Console(this.current_config.console_tx);
+            console_transport.on('error',(e)=>{ this._transport_error_handler(e); });
             logcfg.transports.push(console_transport);
         }
 
@@ -87,13 +79,10 @@ class LoggerWinston extends LoggerAbstract{
         /* FILE > global log (daily rotation) */
         if(this._config.file_logging===true && !_.isNil(this._config.file_global_log_path)){
             console.log('LoggerWinston > add standard logging on '+this._config.file_global_log_path);
-            let globalog_cfg = _.merge(_.merge({},_common_config),{
-                name: 'global_log',
-                filename: this._config.file_global_log_path,
-                level: this._config.file_log_level,
+            let global_file_transport = new winston.transports.DailyRotateFile(this.current_config.global_tx);
+            global_file_transport.on('error',(e)=>{
+                this._transport_error_handler(e);
             });
-            let global_file_transport = new winston.transports.DailyRotateFile(globalog_cfg);
-            global_file_transport.on('error',(e)=>{ _ehd.e=e; this._transport_error_handler(_ehd); });
             logcfg.transports.push(global_file_transport);
         }
 
@@ -101,17 +90,14 @@ class LoggerWinston extends LoggerAbstract{
         /* FILE > error log */
         if(this._config.file_logging===true && !_.isNil(this._config.file_error_log_path)){
             console.log('LoggerWinston > add error logging on '+this._config.file_error_log_path);
-            let errorlog_cfg = _.merge(_.merge({},_common_config),{
-                name: 'error_log',
-                filename: this._config.file_error_log_path,
-                level: this._config.log_levels.error,
-                maxsize:_common_config.maxsize*5, //bigger file for error logs
-            });
-            let error_file_transport = new winston.transports.DailyRotateFile(errorlog_cfg);
-            error_file_transport.on('error',(e)=>{ _ehd.e=e; this._transport_error_handler(_ehd); });
+            let error_file_transport = new winston.transports.DailyRotateFile(this.current_config.error_tx);
+            error_file_transport.on('error',(e)=>{ this._transport_error_handler(e); });
             logcfg.transports.push(error_file_transport);
         }
 
+        this._logger = new winston.Logger(logcfg);
+
+        return;
 
         /* FILE > unhandled exceptions log */ // redundant...exceptions covered by 'error_log'
         // if(this._config.file_logging===true && !_.isNil(this._config.file_exceptions_log_path)){
@@ -126,26 +112,59 @@ class LoggerWinston extends LoggerAbstract{
         //     exception_file_transport.on('error',(e)=>{ _ehd.e=e; this._transport_error_handler(_ehd); });
         //     logcfg.transports.push(exception_file_transport);
         // }
+    }
 
 
-        this._logger = new winston.Logger(logcfg);
+    _init_config(){
+
+        const _common_config = {
+            level: 'silly',
+            handleExceptions: true, //print exceptions
+            timestamp: true,
+            prettyPrint: true,
+            json: false,
+            maxsize:this._config.max_file_size,
+            maxfiles:this._config.max_files,
+            datePattern: this._config.directory_date_pattern+"/"+this._config.file_date_pattern,
+            prepend: true // prepend datePattern to file name
+        };
+
+
+
+        this.current_config.console_tx = _.merge(_.merge({},_common_config),{
+            level: this._config.console_log_level,
+            colorize: true,
+        });
+
+        this.current_config.global_tx = _.merge(_.merge({},_common_config),{
+            name: 'global_log',
+            filename: this._config.file_global_log_path,
+            level: this._config.file_log_level,
+        });
+
+        this.current_config.error_tx = _.merge(_.merge({},_common_config),{
+            name: 'error_log',
+            filename: this._config.file_error_log_path,
+            level: this._config.log_levels.error,
+            maxsize:_common_config.maxsize*5, //bigger file for error logs
+        });
     }
 
 
     log(){
-        this._logger.silly.apply(null,Object.values(arguments)); // TODO: remove Object.values?
+        this._logger.silly.apply(null,_.values(arguments));
     };
 
     info(){
-        this._logger.info.apply(null,Object.values(arguments));
+        this._logger.info.apply(null,_.values(arguments));
     };
 
     error(){
-        this._logger.error.apply(null,Object.values(arguments));
+        this._logger.error.apply(null,_.values(arguments));
     };
 
     warn(){
-        this._logger.warn.apply(null,Object.values(arguments));
+        this._logger.warn.apply(null,_.values(arguments));
     };
 };
 

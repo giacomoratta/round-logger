@@ -1,5 +1,6 @@
 'use strict'
 
+const fs = require('fs-extra');
 const LoggerFactory = require('../index.js');
 
 const Logger = LoggerFactory.create({
@@ -13,6 +14,15 @@ const Logger = LoggerFactory.create({
 // global.console = Logger
 
 
+
+for(let i=0; i<2; i++){
+  Logger.log(__dirname);
+  Logger.info(__dirname);
+  Logger.error(__dirname);
+  Logger.warn(__dirname);
+}
+
+fs.removeSync(__dirname+'/logs_test1');
 
 for(let i=0; i<2; i++){
   Logger.log(__dirname);
