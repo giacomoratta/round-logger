@@ -19,6 +19,10 @@ class LoggerWinston extends LoggerAbstract{
     constructor(config){
         if(!config) config={};
 
+        // check mandatory configurations
+        if(!_.isString(config.directory_logs_abs_path) || config.directory_logs_abs_path.length<1)
+            throw new TypeError('LoggerWinston > absolute path of logs directory missing! [config.directory_logs_abs_path=__dirname+...]');
+
         // winston has different names for log levels
         config.log_levels = {
             log: 'silly',

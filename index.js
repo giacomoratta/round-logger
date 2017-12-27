@@ -5,6 +5,7 @@
  */
 'use strict'
 
+
 class LoggerFactory{
 
     static create(config){
