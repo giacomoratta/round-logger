@@ -4,7 +4,7 @@ const LoggerFactory = require('../index.js');
 
 const Logger = LoggerFactory.create({
     enabled:true,
-    directory_logs_abs_path:__dirname+'/logs',
+    directory_logs_abs_path:__dirname+'/logs_example',
     max_file_size:100000
 });
 
@@ -20,3 +20,5 @@ for(let i=0; i<2; i++){
   Logger.error(__dirname);
   Logger.warn(__dirname);
 }
+
+//fs.removeSync(__dirname+'/logs_example');
